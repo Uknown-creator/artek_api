@@ -1,15 +1,4 @@
 """
-TODO API:
-1. load_FIO
-2. load_TG/num
-3. city
-4. impuls
-5. alldone
-TODO DB:
-1. names
-2. contacts
-3. cities
-4. impulses
 TODO YARIK:(извини)
 root get запрос
 переадресация после post запроса
@@ -34,19 +23,23 @@ conn = sql.connect(r'Database/answers.db')
 cur = conn.cursor()
 impulses = ['ЧТО', 'ТАКОЕ', 'ИМПУЛЬС'] #Вставить направления
 
+
 @app.route("/", methods=['GET'])
 def root():
-    # сумерки сгущались и в какой-то миг похолодела кровь моя...
     return "index" #index.html
+
+
 @app.route("/api/load-fio", methods=['POST'])
+
 def fio():
-    # фосфорные краски - я спектакль вам устрою...
     if request.method == 'POST':
         fio = str(request.data.get('text', ''))
         return status.HTTP_201_CREATED
+
+
 @app.route("/api/load-cont", methods=['POST'])
+
 def load_cont():
-    # память о тебе как жвачка в волосах...
     if request.method == 'POST':
         cont = str(request.data.get('text', ''))
         if len(cont) == 12 and cont[0] == '+':
@@ -54,23 +47,33 @@ def load_cont():
         elif cont[0] == '@':
             return status.HTTP_202_ACCEPTED
         else:
+            cont = 'null'
             return status.HTTP_400_BAD_REQUEST
+
+
 @app.route("/api/load-city", methods=['POST'])
+
 def load_city():
-    # битва - не война, стометровка - не марафон...
     if request.method == 'POST':
         city = str(request.data.get('text', ''))
         return status.HTTP_201_CREATED
+
+
 @app.route("/api/load-impulse", methods=['POST'])
+
 def load_impulse():
-    # все они за одно, это западня....
     if request.method == 'POST':
         impulse = str(request.data.get('text', ''))
         for im in impulses
             if impulse == impulses[im]:
                 return status.HTTP_202_ACCEPTED
+        impulse = 'null'
         return status.HTTP_400_BAD_REQUEST
 
+
+user = (fio, cont, city, impulse)
+cur.execute("INSERT INTO answers VALUES(?, ?, ?, ?);", user)
+conn.commit()
 
 
 if __name__ == "__main__":
